@@ -1,0 +1,25 @@
+{
+  "name": "project-node-mywallet",
+  "type": "module",
+  "version": "1.0.0",
+  "main": "app.js",
+  "scripts": {
+    "start": "node ./src/app.js",
+    "dev": "nodemon ./src/app.js"
+  },
+  "keywords": [],
+  "author": "Marcos Lima",
+  "license": "ISC",
+  "description": "App MyWallet",
+  "dependencies": {
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.7",
+    "express": "^4.21.2",
+    "joi": "^17.13.3",
+    "jsonwebtoken": "^9.0.2",
+    "mongodb": "^6.15.0"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.9"
+  }
+}
