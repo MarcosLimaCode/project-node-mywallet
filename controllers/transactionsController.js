@@ -1,8 +1,6 @@
 import { db } from "../config/database.js";
 import { ObjectId } from "mongodb";
 
-
-
 export async function postTransaction(req, res) {
     const transaction = req.body;
     const checkType = ["deposit", "withdraw"]
@@ -21,16 +19,13 @@ export async function postTransaction(req, res) {
     } catch (error) {
         return res.status(422).send(error.message);
     }
-
-
-}
+}; 
 
 
 export async function getTransaction(req, res) {
     const pages = req.query.page || 1;
     const limit = 10;
     const start = (pages - 1) * limit;
-
 
     try {
         const validate = res.locals.user._id;
@@ -45,8 +40,7 @@ export async function getTransaction(req, res) {
     } catch (error) {
         return res.status(422).send(error.message);
     }
-}
-
+};
 
 
 export async function putTransaction(req, res) {
@@ -69,12 +63,10 @@ export async function putTransaction(req, res) {
 
         return res.sendStatus(204);
     }
-
-    catch (err) {
-        return res.status(500).send(err.message);
+    catch (error) {
+        return res.status(500).send(error.message);
     }
-
-}
+};
 
 export async function deleteTransaction(req, res) {
     const { id } = req.params;
@@ -90,8 +82,7 @@ export async function deleteTransaction(req, res) {
 
         return res.sendStatus(204);
     }
-
-    catch (err) {
-        return res.status(500).send(err.message);
+    catch (error) {
+        return res.status(500).send(error.message);
     }
-}
+};

@@ -8,6 +8,7 @@ dotenv.config();
 export async function validateToken(req, res, next) {
     const { authorization } = req.headers;
     const token = authorization?.replace("Bearer", "").trim();
+   
     if (!token) return res.sendStatus(401);
 
     try {
@@ -17,19 +18,13 @@ export async function validateToken(req, res, next) {
             const user = await db.collection("users").findOne({
                 _id: new ObjectId(decoder.userId)
             })
+
             if (!user) return res.sendStatus(401);
 
             res.locals.user = user;
-
             return next();
-
         })
-
-
     } catch (error) {
         return res.sendStatus(500);
-
     }
-
-
-}
+};

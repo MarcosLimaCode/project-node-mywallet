@@ -7,7 +7,7 @@ dotenv.config();
 
 export async function register(req, res) {
     const user = req.body;
-    const checkEmail = await db.collection("users").findOne({ email: user.email })
+    const checkEmail = await db.collection("users").findOne({ email: user.email });
 
     if (checkEmail) {
         return res.sendStatus(409);
@@ -23,18 +23,20 @@ export async function register(req, res) {
     } catch (error) {
         return res.status(500).send(error.message);
     }
-}
+};
+
 
 export async function login(req, res) {
     const user = req.body;
-    const checkEmail = await db.collection("users").findOne({ email: user.email });
-    const token = jwt.sign({ userId: checkEmail._id }, process.env.JWT_SECRET, { expiresIn: 86400 })
 
     try {
-
+        const checkEmail = await db.collection("users").findOne({ email: user.email });
+       
         if (!checkEmail) {
             return res.sendStatus(404);
         }
+
+        const token = jwt.sign({ userId: checkEmail._id }, process.env.JWT_SECRET, { expiresIn: 86400 })
 
         if (checkEmail && bcrypt.compareSync(user.password, checkEmail.password)) {
             return res.status(200).send(token);
@@ -45,5 +47,4 @@ export async function login(req, res) {
     } catch (error) {
         return res.status(500).send(error.message);
     }
-
-}
+};
