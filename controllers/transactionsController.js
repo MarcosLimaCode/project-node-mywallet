@@ -1,26 +1,19 @@
-import { varSchemaTransacao } from "../schemas/transactionsSchema.js";
 import { db } from "../config/database.js";
 import { ObjectId } from "mongodb";
 
 
 
-export async function varPostEntradaSaida(req, res) {
-    const varTransacao = req.body;
+export async function postTransaction(req, res) {
+    const transaction = req.body;
+    const checkType = ["deposit", "withdraw"]
 
-    const { error } = varSchemaTransacao.validate(varTransacao, { abortEarly: false, convert: false });
-    const varTipoCerto = ["deposit", "withdraw"]
-
-    if (error) {
-        return res.sendStatus(422);
-    }
-
-    if (!varTipoCerto.includes(varTransacao.type)) {
+    if (!checkType.includes(transaction.type)) {
         return res.sendStatus(422)
     }
 
     try {
         await db.collection("transactions").insertOne({
-            ...varTransacao,
+            ...transaction,
             userId: res.locals.user._id
         });
         return res.sendStatus(200);
@@ -33,21 +26,21 @@ export async function varPostEntradaSaida(req, res) {
 }
 
 
-export async function varGetTransacoes(req, res) {
-    const varPaginas = req.query.page || 1;
+export async function getTransaction(req, res) {
+    const pages = req.query.page || 1;
     const limit = 10;
-    const start = (varPaginas - 1) * limit;
+    const start = (pages - 1) * limit;
 
 
     try {
-        const varValidado = res.locals.user._id;
-        const varTodas = await db.collection("transactions")
-        .find({ userId: varValidado })
+        const validate = res.locals.user._id;
+        const allTransactions = await db.collection("transactions")
+        .find({ userId: validate })
         .skip(start)
         .limit(limit)
         .sort({ _id: -1 })
         .toArray();
-        return res.status(200).send(varTodas);
+        return res.status(200).send(allTransactions);
 
     } catch (error) {
         return res.status(422).send(error.message);
@@ -56,16 +49,10 @@ export async function varGetTransacoes(req, res) {
 
 
 
-export async function varPutTransacoes(req, res) {
+export async function putTransaction(req, res) {
     const { id } = req.params;
-    const varNova = req.body;
+    const updatedTransaction = req.body;
     const validId = await db.collection("transactions").findOne({ _id: new ObjectId(id) });
-
-    const { error } = varSchemaTransacao.validate(varNova, { abortEarly: false, convert: false });
-
-    if (error) {
-        return res.sendStatus(422);
-    }
 
     if (!validId) {
         return res.sendStatus(404);
@@ -76,7 +63,7 @@ export async function varPutTransacoes(req, res) {
             _id: new ObjectId(id)
         }, {
             $set: { 
-                ...varNova,  
+                ...updatedTransaction,  
                 userId: res.locals.user._id}
         });
 
@@ -89,7 +76,7 @@ export async function varPutTransacoes(req, res) {
 
 }
 
-export async function varDeleta(req, res) {
+export async function deleteTransaction(req, res) {
     const { id } = req.params;
 
     try {

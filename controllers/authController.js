@@ -1,30 +1,22 @@
 
-import { var1, var2 } from "../schemas/authSchema.js";
 import { db } from "../config/database.js";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import dotenv from "dotenv";
 dotenv.config();
 
-export async function varCadastro(req, res) {
-    const varUsuario = req.body;
-    const varValidacao = var1.validate(varUsuario, { abortEarly: false });
-    const varEmail = await db.collection("users").findOne({ email: varUsuario.email })
+export async function register(req, res) {
+    const user = req.body;
+    const checkEmail = await db.collection("users").findOne({ email: user.email })
 
-
-    if (varValidacao.error) {
-        const message = varValidacao.error.details.map(detail => detail.message);
-        return res.status(422).send(message);
-    }
-
-    if (varEmail) {
+    if (checkEmail) {
         return res.sendStatus(409);
     }
 
     try {
         await db.collection("users").insertOne({
-            ...varUsuario,
-            password: bcrypt.hashSync(varUsuario.password, 10)
+            ...user,
+            password: bcrypt.hashSync(user.password, 10)
         });
         return res.sendStatus(201);
 
@@ -33,25 +25,18 @@ export async function varCadastro(req, res) {
     }
 }
 
-export async function varLogin(req, res) {
-    const varUsuario = req.body;
-    const varCadastrado = await db.collection("users").findOne({ email: varUsuario.email });
-    const token = jwt.sign({ userId: varCadastrado._id }, process.env.JWT_SECRET, { expiresIn: 86400 })
-    const varValidacao = var2.validate(varUsuario, { abortEarly: false });
-
-
-    if (varValidacao.error) {
-        const message = varValidacao.error.details.map(detail => detail.message);
-        return res.status(422).send(message);
-    }
+export async function login(req, res) {
+    const user = req.body;
+    const checkEmail = await db.collection("users").findOne({ email: user.email });
+    const token = jwt.sign({ userId: checkEmail._id }, process.env.JWT_SECRET, { expiresIn: 86400 })
 
     try {
 
-        if (!varCadastrado) {
+        if (!checkEmail) {
             return res.sendStatus(404);
         }
 
-        if (varCadastrado && bcrypt.compareSync(varUsuario.password, varCadastrado.password)) {
+        if (checkEmail && bcrypt.compareSync(user.password, checkEmail.password)) {
             return res.status(200).send(token);
         }
         else {

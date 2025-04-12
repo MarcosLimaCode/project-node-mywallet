@@ -5,7 +5,7 @@ import { ObjectId } from "mongodb";
 dotenv.config();
 
 
-export async function varValidarToken(req, res, next) {
+export async function validateToken(req, res, next) {
     const { authorization } = req.headers;
     const token = authorization?.replace("Bearer", "").trim();
     if (!token) return res.sendStatus(401);

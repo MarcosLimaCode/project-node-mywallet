@@ -2,7 +2,7 @@ import joi from "joi";
 
 
 //cadastro
-export const var1 = joi.object(
+export const registerUser = joi.object(
     {
         name: joi.string().required(),
         email: joi.string().email().required(),
@@ -10,7 +10,7 @@ export const var1 = joi.object(
     })
 
 //login
-export const var2 = joi.object(
+export const loginUser = joi.object(
     {
         email: joi.string().email().required(),
         password: joi.string().min(6).required()

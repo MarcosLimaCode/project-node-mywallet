@@ -2,7 +2,7 @@ import joi from "joi";
 
 
 //adicao de transação
-export const varSchemaTransacao = joi.object(
+export const transactionSchema = joi.object(
     {
         value: joi.number().positive().precision(2).required(),
         description: joi.string().required(),
