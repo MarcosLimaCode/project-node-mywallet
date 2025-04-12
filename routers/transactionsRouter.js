@@ -1,15 +1,16 @@
 import { Router } from "express";
-import { varPostEntradaSaida, var2, var3, var4 } from "../controllers/transactionsController.js";
+import { varPostEntradaSaida, varGetTransacoes, varPutTransacoes, varDeleta } from "../controllers/transactionsController.js";
+import { varValidarToken } from "../middleware/authMiddleware.js";
 
 
 const transactionsRouter = Router();
 
-transactionsRouter.post("/transactions", varPostEntradaSaida);
+transactionsRouter.post("/transactions", varValidarToken, varPostEntradaSaida);
 
-transactionsRouter.get("/transactions", var2);
+transactionsRouter.get("/transactions", varValidarToken, varGetTransacoes);
 
-transactionsRouter.put("/transactions", var3);
+transactionsRouter.put("/transactions/:id", varValidarToken, varPutTransacoes);
 
-transactionsRouter.delete("/transactions", var4);
+transactionsRouter.delete("/transactions/:id", varValidarToken, varDeleta);
 
 export default transactionsRouter;

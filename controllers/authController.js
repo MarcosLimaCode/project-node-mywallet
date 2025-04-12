@@ -35,8 +35,10 @@ export async function varCadastro(req, res) {
 
 export async function varLogin(req, res) {
     const varUsuario = req.body;
-    const token = jwt.sign({}, process.env.JWT_SECRET)
+    const varCadastrado = await db.collection("users").findOne({ email: varUsuario.email });
+    const token = jwt.sign({ userId: varCadastrado._id }, process.env.JWT_SECRET, { expiresIn: 86400 })
     const varValidacao = var2.validate(varUsuario, { abortEarly: false });
+
 
     if (varValidacao.error) {
         const message = varValidacao.error.details.map(detail => detail.message);
@@ -44,7 +46,6 @@ export async function varLogin(req, res) {
     }
 
     try {
-        const varCadastrado = await db.collection("users").findOne({ email: varUsuario.email });
 
         if (!varCadastrado) {
             return res.sendStatus(404);
