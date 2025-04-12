@@ -1,6 +1,6 @@
 import { MongoClient } from "mongodb";
 
-import dotenv from "dotenv"
+import dotenv from "dotenv";
 dotenv.config();
 
 const databaseURL = process.env.DATABASE_URL;
